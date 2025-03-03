@@ -97,6 +97,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: "production",
+});
+
 import { ref, onMounted,computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useTestimonialStore } from "~/store/useTestimonialStore";

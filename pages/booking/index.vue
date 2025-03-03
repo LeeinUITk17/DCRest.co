@@ -10,6 +10,11 @@
 </template>
 
 <script setup>
+
+definePageMeta({
+  layout: "production",
+});
+
 import { ref, onMounted } from 'vue';
 import bookParty from '~/components/bookParty.vue';
 import loading from '~/components/loading.vue';

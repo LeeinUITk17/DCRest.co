@@ -11,7 +11,7 @@
           <p class="text-4xl font-extrabold tracking-wide drop-shadow-lg">Drunken Clam</p>
         </div>
         <nav class="hidden lg:flex text-gray-100 justify-center text-xl space-x-6 font-medium transition duration-200 mt-2">
-          <HeaderItem title="Home" link="/" :activeLink="currentPath" />
+          <HeaderItem title="Home" link="/home" :activeLink="currentPath" />
           <HeaderItem title="Booking A Party" link="/booking" :activeLink="currentPath" />
           <HeaderItem title="Find DC Store" link="/findkfc" :activeLink="currentPath" />
           <HeaderItem title="Feedback" link="/feedback" :activeLink="currentPath" />
@@ -99,7 +99,7 @@ const cartStore = useCartStore();
 const cartItems = computed(() => cartStore.cartItems || []);
 const isSidebarOpen = ref(false);
 const navItems = [
-  { name: 'Home', link: '/', icon: 'fas fa-home fa-lg' },
+  { name: 'Home', link: '/home', icon: 'fas fa-home fa-lg' },
   { name: 'Booking a party', link: '/booking', icon: 'fas fa-calendar-alt fa-lg' },
   { name: 'Find DC store', link: '/findkfc', icon: 'fas fa-map-marker-alt fa-lg' },
   { name: 'Your Profile', link: '/profile/detail', icon: 'fas fa-user fa-lg' },

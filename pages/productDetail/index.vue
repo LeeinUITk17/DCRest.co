@@ -4,6 +4,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "production",
+});
 import { ref, onMounted } from 'vue';
 import ProductDetail from '@/components/ProductDetail.vue';
 import loading from '~/components/loading.vue';

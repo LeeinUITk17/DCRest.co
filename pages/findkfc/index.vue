@@ -10,6 +10,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "production",
+});
 import { ref, onMounted } from 'vue';
 import findAddress from '~/components/findAddress.vue';
 import loading from '~/components/loading.vue';

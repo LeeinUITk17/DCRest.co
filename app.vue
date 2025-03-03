@@ -1,13 +1,13 @@
 <template>
   <div>
-    <Header />
+    <!-- <Header /> -->
      <NuxtLayout>
         <NuxtPage/>
      </NuxtLayout>
-    <Footer/>
+    <!-- <Footer/> -->
   </div>
 </template>
 <script lang="tsx" setup>
-import Header from './components/header.vue'
-import Footer from './components/Footer.vue'
+// import Header from './components/header.vue'
+// import Footer from './components/Footer.vue'
 </script>

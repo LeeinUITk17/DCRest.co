@@ -34,7 +34,7 @@ export default {
     return {
       isOpen: false,
       navdata: [
-        { name: 'Home', link: '/', icon: 'fas fa-home fa-2x' },
+        { name: 'Home', link: '/home', icon: 'fas fa-home fa-2x' },
         { name: 'Booking a party', link: '/booking', icon: 'fas fa-calendar-alt fa-2x' },
         { name: 'Find DC store', link: '/findkfc', icon: 'fas fa-map-marker-alt fa-2x' },
         { name: 'Your Profile', link: '/profile/detail', icon: 'fas fa-user fa-2x' },

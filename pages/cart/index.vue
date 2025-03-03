@@ -8,6 +8,10 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "production",
+});
+
 import { ref, onMounted } from 'vue';
 import CartList from '~/components/cartList.vue';
 import loading from '~/components/loading.vue';
