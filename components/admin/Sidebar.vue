@@ -1,10 +1,10 @@
 <template>
   <aside class="w-16 md:w-52 h-full fixed left-0 top-0 overflow-y-auto transition-all duration-300 border-r-[1.5px] border-black">
     <div class="p-4 flex items-center justify-center md:justify-start">
-      <span class="text-xl font-bold text-gray-700 hidden md:inline">🍔 DCRest.SMS</span>
+      <span class="text-xl font-bold text-gray-700 hidden md:inline ">🍔 DCRest.SMS</span>
       <span class="text-xl font-bold text-gray-700 md:hidden">🍔</span>
     </div>
-    <nav class="mt-4">
+    <nav class="mt-4 transition-all duration-300">
       <ItemSidebar icon="home" label="Dashboard" to="/admin/dashboard" />
       <ItemSidebar icon="shopping-cart" label="Orders" to="/admin/orders" />
       <ItemSidebar icon="users" label="Customers" to="/admin/customers" />
