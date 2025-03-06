@@ -1,9 +1,9 @@
 <template>
   <div class="flex h-screen">
-    <div class="w-16 md:w-64 flex-shrink-0 z-50">
+    <div class="w-16 md:w-52 flex-shrink-0 z-50">
       <Sidebar />
     </div>
-    <div class="flex-1 overflow-auto p-4 md:p-8 transition-all duration-300">
+    <div class="flex-1 overflow-auto p-4 md:p-8 transition-all duration-300 ">
         <TableComponent :columns="columns" :data="data" />
     </div>
   </div>
