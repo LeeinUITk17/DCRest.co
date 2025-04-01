@@ -100,12 +100,6 @@
                   <div class="flex flex-col items-center space-y-4">
                     <i class="fas fa-database text-4xl text-gray-400"></i>
                     <span class="italic text-gray-500">No data found. Would you like to add some?</span>
-                    <button
-                      @click="addNewData"
-                      class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 focus:outline-none"
-                    >
-                      Add New Data
-                    </button>
                   </div>
                 </td>
               </tr>
