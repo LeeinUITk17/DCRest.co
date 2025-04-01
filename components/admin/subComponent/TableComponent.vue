@@ -1,177 +1,174 @@
 <template>
-  <div class="bg-gray-300">
-    <div class="bg-blue-50 rounded-lg shadow overflow-hidden">
-      <div class="flex justify-between items-center p-4 border-b border-gray-200">
-        <div class="relative flex-grow mr-4 w-full md:w-1/4">
-          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+  <div class="bg-gray-100 p-4 md:p-6">
+    <div class="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
+      <div class="flex flex-wrap justify-between items-center p-4 border-b border-gray-200 space-y-2 md:space-y-0">
+        <div class="relative flex-grow mr-4 w-full sm:w-auto">
+          <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
           <input
             v-model.trim="debouncedSearchQuery"
             type="text"
-            placeholder="Search..."
+            placeholder="Search table..."
             aria-label="Search"
-            class="w-full md:w-1/4 pl-10 pr-4 py-2 rounded-md bg-gray-100 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-blue-50 transition duration-200"
+            class="w-full pl-10 pr-10 py-2 rounded-md border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 transition duration-200"
           />
           <button
             @click="clearSearch"
-            v-if="searchQuery"
-            class="absolute right-2 top-2 text-gray-500 hover:text-gray-700 transition duration-200 focus:outline-none"
+            v-if="debouncedSearchQuery"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition duration-200 focus:outline-none p-1"
             aria-label="Clear Search"
           >
-            <i class="fas fa-times-circle"></i>
+            <i class="fas fa-times-circle text-sm"></i>
           </button>
         </div>
-        <button
-          @click="openSettings"
-          class="px-4 py-2 rounded-md transition duration-200 focus:outline-none"
-          title="Settings"
-          data-tooltip="Settings"
-        >
-          <i class="fas fa-cog"></i> 
-        </button>
+        <div class="flex items-center space-x-2">
+          <button
+             @click="$emit('add-new')"
+             class="px-4 py-2 rounded-md bg-black text-white text-sm font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-black transition duration-200"
+             title="Add New Item"
+          >
+            <i class="fas fa-plus mr-1"></i> Add New
+          </button>
+           <button
+            @click="openSettings"
+            class="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400 transition duration-200"
+            title="Settings"
+          >
+            <i class="fas fa-cog"></i>
+          </button>
+        </div>
       </div>
-
-      <div v-if="isLoading" class="flex justify-center items-center p-6">
-        <i class="fas fa-spinner fa-spin text-2xl text-blue-500"></i>
+      <div v-if="isLoading" class="flex justify-center items-center p-10">
+        <i class="fas fa-spinner fa-spin text-3xl text-gray-500"></i>
+        <span class="ml-3 text-gray-600">Loading data...</span>
       </div>
-
-      <div class="overflow-y-auto">
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="sticky top-0 bg-blue-50 shadow-sm">
-              <tr>
-                <th class="px-4 py-3 text-left font-semibold uppercase whitespace-nowrap border-b-2 border-gray-300 align-middle">
-                  <input
-                    type="checkbox"
-                    v-model="selectAllRows"
-                    class="form-checkbox text-blue-500 rounded focus:ring-blue-500 align-middle"
-                  />
-                </th>
-                <th
-                  v-for="column in columns"
-                  :key="column.key"
-                  :class="[
-                    'px-4 py-3 text-left font-semibold uppercase whitespace-nowrap border-b-2 border-gray-300 align-middle',
-                    { 'hidden md:table-cell': column.optional },
-                  ]"
-                >
-                  {{ column.label }}
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr v-if="isLoading" v-for="i in 5" :key="i" class="animate-pulse">
-                <td class="px-4 py-3" v-for="column in columns" :key="column.key">
-                  <div class="h-4 bg-gray-200 rounded"></div>
-                </td>
-              </tr>
+      <div v-show="!isLoading" class="overflow-x-auto">
+        <table class="min-w-full text-sm text-gray-800 border-collapse">
+          <thead class="sticky top-0 bg-gray-50 z-10">
+            <tr>
+              <th class="px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap border-b border-gray-200 align-middle w-12">
+                <input
+                  type="checkbox"
+                  v-model="selectAllRows"
+                  @change="toggleSelectAll"
+                  class="form-checkbox h-4 w-4 text-gray-600 border-gray-300 rounded focus:ring-gray-500 align-middle"
+                  aria-label="Select all rows on current page"
+                />
+              </th>
+              <th
+                v-for="column in columns"
+                :key="column.key"
+                :class="[ 'px-4 py-3 text-left font-medium text-gray-600 uppercase tracking-wider whitespace-nowrap border-b border-gray-200 align-middle', { 'hidden md:table-cell': column.optional } ]"
+              >
+                {{ column.label }}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white">
+            <template v-if="!isLoading && pagedData.length > 0">
               <tr
                 v-for="(item, index) in pagedData"
-                :key="index"
-                class="hover:bg-blue-100 border-t border-gray-200 cursor-pointer transition duration-200"
-                :class="{ 'bg-blue-200': selectedRows.includes(item), 'bg-blue-50': index % 2 === 0 }"
-                @click="selectRow(item)"
+                :key="item.id || index"
+                class="hover:bg-gray-50 border-b border-gray-100 transition duration-150 ease-in-out"
+                :class="{ 'bg-gray-100': isSelected(item) }"
+                @click="toggleRowSelection(item)"
               >
-                <td class="px-4 py-3 text-gray-700 whitespace-nowrap align-middle">
+                <td class="px-4 py-3 whitespace-nowrap align-middle">
                   <input
                     type="checkbox"
-                    :value="item"
-                    v-model="selectedRows"
-                    class="form-checkbox text-blue-500 rounded focus:ring-blue-500 align-middle"
+                    :checked="isSelected(item)"
+                    @change="toggleRowSelection(item)"
+                    @click.stop
+                    class="form-checkbox h-4 w-4 text-gray-600 border-gray-300 rounded focus:ring-gray-500 align-middle"
+                    :aria-label="'Select row ' + (index + 1)"
                   />
                 </td>
                 <td
                   v-for="column in columns"
                   :key="column.key"
-                  :class="['px-4 py-3 text-gray-700 whitespace-nowrap align-middle', { 'hidden md:table-cell': column.optional }]"
+                  :class="['px-4 py-3 whitespace-nowrap align-middle', { 'hidden md:table-cell': column.optional }]"
                 >
-                  {{ getValue(item, column.key) }}
+                  {{ column.formatter ? column.formatter(getValue(item, column.key), item) : getValue(item, column.key) }}
                 </td>
               </tr>
-
-              <tr v-if="pagedData.length === 0 && filteredData.length > 0">
-                <td :colspan="columns.length + 1" class="px-4 py-6 text-center text-gray-500 italic">
-                  No data found on this page.
-                </td>
-              </tr>
-
-              <tr v-if="filteredData.length === 0 && !isLoading">
-                <td :colspan="columns.length + 1" class="px-4 py-6 text-center text-gray-500">
-                  <div class="flex flex-col items-center space-y-4">
-                    <i class="fas fa-database text-4xl text-gray-400"></i>
-                    <span class="italic text-gray-500">No data found. Would you like to add some?</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            </template>
+            <tr v-if="!isLoading && pagedData.length === 0 && filteredData.length > 0">
+              <td :colspan="columns.length + 1" class="px-4 py-6 text-center text-gray-500 italic border-b border-gray-100">
+                No results found on this page.
+              </td>
+            </tr>
+            <tr v-if="!isLoading && filteredData.length === 0">
+              <td :colspan="columns.length + 1" class="px-4 py-10 text-center text-gray-500 border-b border-gray-100">
+                <div class="flex flex-col items-center space-y-3">
+                  <i class="fas fa-inbox text-4xl text-gray-400"></i>
+                  <span>No data found matching your criteria.</span>
+                   <button
+                     @click="$emit('add-new')"
+                     class="text-sm font-medium text-gray-700 hover:text-black hover:underline focus:outline-none"
+                   >
+                      Add New Item?
+                   </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div v-if="filteredData.length > 0" class="flex justify-between items-center p-4 border-t border-gray-200">
-        <div class="flex items-center space-x-4">
-          <span class="text-sm text-gray-700">Items per page:</span>
+      <div v-if="!isLoading && totalPages > 1" class="flex flex-wrap justify-between items-center p-4 border-t border-gray-200 space-y-3 md:space-y-0">
+        <div class="flex items-center space-x-3 text-sm text-gray-600">
           <select
             v-model="itemsPerPage"
-            class="px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            @change="currentPage = 1"
+            class="px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-400 text-sm"
+            aria-label="Items per page"
           >
             <option value="10">10</option>
             <option value="20">20</option>
             <option value="50">50</option>
+            <option value="100">100</option>
           </select>
-          <span class="text-sm text-gray-700">
-            Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredData.length) }} of {{ filteredData.length }} items
+          <span>per page</span>
+          <span class="hidden sm:inline">|</span>
+          <span class="hidden sm:inline">
+            Showing {{ Math.min((currentPage - 1) * itemsPerPage + 1, filteredData.length) }}
+            - {{ Math.min(currentPage * itemsPerPage, filteredData.length) }}
+            of {{ filteredData.length }} results
           </span>
         </div>
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-1">
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
-            class="p-2 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+            class="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
             aria-label="Previous Page"
           >
-            <i class="fas fa-chevron-left"></i>
+            <i class="fas fa-chevron-left text-xs"></i>
           </button>
-
-          <span v-for="page in totalPages" :key="page" class="mx-0.5">
-            <button
-              @click="goToPage(page)"
-              :class="[
-                'px-3 py-1.5 rounded-md transition duration-200 focus:outline-none',
-                currentPage === page ? 'bg-blue-500 text-white hover:bg-blue-600 font-semibold shadow-sm' : 'text-gray-700 hover:bg-blue-100',
-              ]"
-            >
-              {{ page }}
-            </button>
-          </span>
-
+          <button
+            v-for="page in paginationRange"
+            :key="page"
+            @click="goToPage(page)"
+            :disabled="page === '...'"
+            :class="[ 'px-3 py-1.5 rounded-md text-sm transition duration-150 focus:outline-none focus:ring-1 focus:ring-gray-400', page === '...' ? 'cursor-default text-gray-500' : 'hover:bg-gray-100', currentPage === page ? 'bg-black text-white hover:bg-gray-800 font-semibold' : 'text-gray-700' ]"
+          >
+            {{ page }}
+          </button>
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages"
-            class="p-2 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+            class="p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
             aria-label="Next Page"
           >
-            <i class="fas fa-chevron-right"></i>
+            <i class="fas fa-chevron-right text-xs"></i>
           </button>
         </div>
       </div>
     </div>
-
-    <transition name="fade">
-      <PopupDetail
-        v-if="isPopupVisible"
-        :data="selectedRow"
-        :close="closePopup"
-      />
-    </transition>
   </div>
 </template>
 
-
 <script setup>
-import { ref, computed, watch } from "vue";
-import { get } from "lodash-es";
-import PopupDetail from "./PopupDetail.vue";
-import { debounce } from 'lodash-es';
+import { ref, computed, watch, onMounted } from "vue";
+import { get, debounce } from "lodash-es";
 
 const props = defineProps({
   columns: {
@@ -186,132 +183,229 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  rowKey: {
+      type: String,
+      default: 'id'
+  }
 });
 
-const getValue = (item, key) => get(item, key, "-");
+const emit = defineEmits(['update:selected', 'row-click', 'add-new', 'settings-click']);
 
-const selectedRow = ref(null);
-const selectedRows = ref([]);
-const isPopupVisible = ref(false);
 const searchQuery = ref("");
-const selectAllRows = ref(false);
-const itemsPerPage = ref(10);
+const debouncedSearchQuery = ref("");
+const selectedRows = ref(new Set());
+const selectAllOnPage = ref(false);
+const itemsPerPage = ref(props.pageSize);
 const currentPage = ref(1);
 
-const debouncedSearchQuery = ref("");
 const updateSearchQuery = debounce((value) => {
   searchQuery.value = value;
-}, 300); 
-
-watch(() => debouncedSearchQuery.value, (newValue) => {
-  updateSearchQuery(newValue);
-});
-
+  currentPage.value = 1;
+  selectAllOnPage.value = false;
+  selectedRows.value.clear();
+  emit('update:selected', []);
+}, 300);
 
 const filteredData = computed(() => {
-  if (!searchQuery.value) return props.data;
+  const query = searchQuery.value.toLowerCase().trim();
+  if (!query) return props.data;
+
   return props.data.filter(item =>
-    props.columns.some(column =>
-      String(getValue(item, column.key)).toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
+    props.columns.some(column => {
+      if (column.searchable === false) return false;
+      const value = String(getValue(item, column.key)).toLowerCase();
+      return value.includes(query);
+    })
   );
 });
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredData.value.length / props.pageSize);
+  return Math.ceil(filteredData.value.length / itemsPerPage.value);
 });
 
 const pagedData = computed(() => {
-  const startIndex = (currentPage.value - 1) * props.pageSize;
-  const endIndex = startIndex + props.pageSize;
-  return filteredData.value.slice(startIndex, endIndex);
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredData.value.slice(start, end);
 });
 
+const paginationRange = computed(() => {
+    const current = currentPage.value;
+    const last = totalPages.value;
+    const delta = 1;
+    const left = current - delta;
+    const right = current + delta + 1;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (let i = 1; i <= last; i++) {
+        if (i === 1 || i === last || (i >= left && i < right)) {
+            range.push(i);
+        }
+    }
+
+    let l;
+    for (let i of range) {
+        if (l) {
+            if (i - l === 2) {
+                rangeWithDots.push(l + 1);
+            } else if (i - l > 2) {
+                rangeWithDots.push('...');
+            }
+        }
+        rangeWithDots.push(i);
+        l = i;
+    }
+    return rangeWithDots;
+});
+
+const getValue = (item, key) => get(item, key, "");
+
+const clearSearch = () => {
+  debouncedSearchQuery.value = "";
+};
+
 const goToPage = (page) => {
-  currentPage.value = page;
-};
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
+  if (page !== '...' && page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
   }
 };
+const prevPage = () => goToPage(currentPage.value - 1);
+const nextPage = () => goToPage(currentPage.value + 1);
 
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
+const isSelected = (item) => {
+    return selectedRows.value.has(getValue(item, props.rowKey));
 };
 
+const toggleRowSelection = (item) => {
+    const key = getValue(item, props.rowKey);
+    if (!key) {
+        console.warn("Row item missing unique key specified by 'rowKey' prop:", item);
+        return;
+    }
 
-const openPopup = (item) => {
-  selectedRow.value = item;
-  isPopupVisible.value = true;
+    if (selectedRows.value.has(key)) {
+        selectedRows.value.delete(key);
+    } else {
+        selectedRows.value.add(key);
+    }
+    checkSelectAllState();
+    emitSelected();
+    emit('row-click', item);
 };
 
-const closePopup = () => {
-  isPopupVisible.value = false;
+const toggleSelectAll = () => {
+    const pageKeys = pagedData.value.map(item => getValue(item, props.rowKey)).filter(key => key);
+
+    if (selectAllOnPage.value) {
+        pageKeys.forEach(key => selectedRows.value.add(key));
+    } else {
+        pageKeys.forEach(key => selectedRows.value.delete(key));
+    }
+    emitSelected();
 };
 
-const selectRow = (item) => {
-  selectedRow.value = item;
+const checkSelectAllState = () => {
+    const pageKeys = new Set(pagedData.value.map(item => getValue(item, props.rowKey)).filter(key => key));
+    if (pageKeys.size === 0) {
+        selectAllOnPage.value = false;
+        return;
+    }
+    const allSelected = [...pageKeys].every(key => selectedRows.value.has(key));
+    selectAllOnPage.value = allSelected;
+};
+
+const emitSelected = () => {
+    const selectedItems = props.data.filter(item => selectedRows.value.has(getValue(item, props.rowKey)));
+    emit('update:selected', selectedItems);
 };
 
 const openSettings = () => {
   console.log("Settings clicked");
+  emit('settings-click');
 };
 
-const clearSearch = () => {
-  debouncedSearchQuery.value = ""; 
-  searchQuery.value = ""; 
-};
-
-
-watch(selectAllRows, (newValue) => {
-  if (newValue) {
-    selectedRows.value = [...pagedData.value];
-  } else {
-    selectedRows.value = [];
-  }
+watch(debouncedSearchQuery, (newValue) => {
+  updateSearchQuery(newValue);
 });
 
-watch(pagedData, (newValue) => {
-  if (selectAllRows.value && newValue.length !== selectedRows.value.length) {
-    selectAllRows.value = false;
-  }
+watch(pagedData, () => {
+  checkSelectAllState();
+}, { deep: true });
+
+watch(selectedRows, () => {
+    checkSelectAllState();
+}, { deep: true });
+
+watch(itemsPerPage, () => {
+    currentPage.value = 1;
 });
 
-watch(filteredData, () => {
-  currentPage.value = 1;
-  selectAllRows.value = false;
+watch(() => props.data, () => {
+    selectedRows.value.clear();
+    selectAllOnPage.value = false;
+    emitSelected();
+}, { deep: true });
+
+onMounted(() => {
+    itemsPerPage.value = props.pageSize;
 });
 </script>
+
 <style scoped>
-.bg-white {
-  background-color: #ffffff;
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
 }
-
-.bg-gray-100 {
-  background-color: #f3f4f6;
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
-
-.bg-gray-200 {
-  background-color: #e5e7eb;
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
 }
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s;
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
 }
-.fade-enter, .fade-leave-to {
+.form-checkbox {
+  appearance: none;
+  padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+  background-origin: border-box;
+  user-select: none;
+  flex-shrink: 0;
+  height: 1em;
+  width: 1em;
+  color: #4a90e2;
+  background-color: #fff;
+  border-color: #cbd5e0;
+  border-width: 1px;
+  border-radius: 0.25rem;
+}
+.form-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.form-checkbox:focus {
+  outline: none;
+ box-shadow: 0 0 0 2px rgba(160, 160, 160, 0.5);
+ border-color: #a0aec0;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
-}
-@media (max-width: 768px) {
-  .overflow-x-auto {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    min-width: 600px;
-  }
 }
 </style>

@@ -1,56 +1,105 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-      <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">Signup</h2>
-      <form @submit.prevent="handleSignup">
-        <div class="mb-4">
-          <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+  <div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 px-4">
+    <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg border border-gray-200">
+      <div class="text-center">
+        <h2 class="text-3xl font-bold text-gray-800">
+          Create your Account
+        </h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Enter your details below to register.
+        </p>
+      </div>
+
+      <form class="space-y-6" @submit.prevent="handleSignup">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+            Full Name
+          </label>
           <input
             v-model="name"
             type="text"
             id="name"
-            class="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            name="name"
+            placeholder="Peter Griffin"
+            class="w-full px-4 py-2.5 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out"
             required
+            autocomplete="name"
           />
         </div>
-        <div class="mb-4">
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+            Email Address
+          </label>
           <input
             v-model="email"
             type="email"
             id="email"
-            class="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            name="email"
+            placeholder="drunkenGuy@gmail.com"
+            class="w-full px-4 py-2.5 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out"
             required
+            autocomplete="email"
           />
         </div>
-        <div class="mb-4">
-          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
           <input
             v-model="password"
             type="password"
             id="password"
-            class="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            name="password"
+            placeholder="•••••••• (min. 8 characters)"
+            class="w-full px-4 py-2.5 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out"
             required
+            autocomplete="new-password" 
+            minlength="8" 
           />
         </div>
-        <div class="mb-4">
-          <label for="phone" class="block text-sm font-medium text-gray-700">Phone (Optional)</label>
+
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+            Phone Number <span class="text-gray-500">(Optional)</span>
+          </label>
           <input
             v-model="phone"
-            type="text"
+            type="tel" 
             id="phone"
-            class="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            name="phone"
+            placeholder="(123) 456-7890"
+            class="w-full px-4 py-2.5 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out"
+            autocomplete="tel"
           />
         </div>
-        <button
-          type="submit"
-          class="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
-          :disabled="loading"
-        >
-          {{ loading ? 'Signing up...' : 'Signup' }}
-        </button>
+
+        <div>
+          <button
+            type="submit"
+            class="w-full flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+            :disabled="loading"
+          >
+            <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ loading ? 'Creating Account...' : 'Create Account' }}
+          </button>
+        </div>
       </form>
-      <p v-if="errorMessage" class="mt-3 text-sm text-red-500">{{ errorMessage }}</p>
+
+      <p v-if="errorMessage" class="mt-4 text-sm text-center text-red-600 bg-red-100 p-3 rounded-md">
+        {{ errorMessage }}
+      </p>
+
+      <p class="mt-8 text-sm text-center text-gray-600">
+        Already have an account?
+        <router-link to="/admin/login" class="font-medium text-blue-600 hover:text-blue-500 hover:underline">
+          Sign in
+        </router-link>
+      </p>
     </div>
   </div>
 </template>
@@ -69,24 +118,48 @@ const errorMessage = ref('');
 const router = useRouter();
 
 const handleSignup = async () => {
+  if (password.value.length < 8) {
+    errorMessage.value = 'Password must be at least 8 characters long.';
+    return;
+  }
+
   loading.value = true;
   errorMessage.value = '';
+
+  const payload = {
+    name: name.value,
+    email: email.value,
+    password: password.value,
+  };
+  if (phone.value) {
+    payload.phone = phone.value;
+  }
+
   try {
-    await axios.post(
+    const response = await axios.post(
       'http://localhost:8000/auth/signup',
-      {
-        name: name.value,
-        email: email.value,
-        password: password.value,
-        phone: phone.value,
-      },
+      payload,
       { withCredentials: true }
     );
-    router.push('/dashboard');
+
+    router.push('/login?signup=success');
   } catch (error) {
-    errorMessage.value = error.response?.data?.message || 'Signup failed';
+    if (error.response) {
+      errorMessage.value = error.response.data?.message || `Signup failed (Status: ${error.response.status})`;
+      if (error.response.status === 409) {
+        errorMessage.value = 'An account with this email address already exists.';
+      }
+    } else if (error.request) {
+      errorMessage.value = 'Signup failed: No response from server. Please check your connection.';
+    } else {
+      errorMessage.value = `Signup failed: ${error.message}`;
+    }
+    console.error("Signup error:", error);
   } finally {
     loading.value = false;
   }
 };
 </script>
+
+<style scoped>
+</style>

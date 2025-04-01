@@ -5,7 +5,7 @@
       <span class="text-xl font-bold text-gray-700 md:hidden">🍔</span>
     </div>
     <nav class="mt-4 transition-all duration-300">
-      <ItemSidebar icon="home" label="Dashboard" to="/admin/dashboard" />
+      <ItemSidebar icon="home" label="Dashboard" to="/admin" />
       <ItemSidebar icon="shopping-cart" label="Orders" to="/admin/orders" />
       <ItemSidebar icon="users" label="Customers" to="/admin/customers" />
       <ItemSidebar icon="utensils" label="Menu" to="/admin/menu" />
