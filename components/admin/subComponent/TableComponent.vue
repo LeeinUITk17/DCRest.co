@@ -20,7 +20,7 @@
             <i class="fas fa-times-circle text-sm"></i>
           </button>
         </div>
-        <div class="flex items-center space-x-2">
+        <!-- <div class="flex items-center space-x-2">
           <button
              @click="$emit('add-new')"
              class="px-4 py-2 rounded-md bg-black text-white text-sm font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-black transition duration-200"
@@ -35,7 +35,7 @@
           >
             <i class="fas fa-cog"></i>
           </button>
-        </div>
+        </div> -->
       </div>
       <div v-if="isLoading" class="flex justify-center items-center p-10">
         <i class="fas fa-spinner fa-spin text-3xl text-gray-500"></i>
