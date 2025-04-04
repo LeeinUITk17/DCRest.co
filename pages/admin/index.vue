@@ -406,7 +406,7 @@ async function handleCheckout() {
   };
   try {
     // Ensure endpoint '/order' vs '/orders' is correct
-    const response = await apiClient.post('/order', orderPayload);
+    const response = await apiClient.post(`/order/${customerPhoneNumber.value}`, orderPayload);
     if (response.data && response.data.order && response.data.order.id) {
         createdOrder.value = {
             id: response.data.order.id,
