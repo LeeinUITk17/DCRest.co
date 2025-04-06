@@ -6,12 +6,12 @@
     </div>
     <nav class="mt-4 flex-grow overflow-y-auto overflow-x-hidden">
       <ItemSidebar icon="cash-register" label="Point Of Sale" to="/admin" />
+      <ItemSidebar icon="briefcase" label="EMS" to="/admin/ems" />
       <ItemSidebar icon="shopping-cart" label="Orders" to="/admin/orders" />
       <ItemSidebar icon="users" label="Customers" to="/admin/customers" />
       <ItemSidebar icon="utensils" label="Menu" to="/admin/menu" />
       <ItemSidebar icon="ticket-alt" label="Coupons" to="/admin/coupons" />
       <ItemSidebar icon="user-tie" label="Employees" to="/admin/employees" />
-      <ItemSidebar icon="chart-line" label="Sales" to="/admin/sales" />
       <ItemSidebar icon="boxes" label="Inventory" to="/admin/inventory" />
       <ItemSidebar icon="calendar" label="Calendar" to="/admin/calendar" />
       <ItemSidebar icon="cog" label="Settings" to="/admin/settings" />

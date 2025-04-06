@@ -5,7 +5,7 @@
       </div>
   
       <div class="flex-1 flex flex-col overflow-hidden">
-        <div class="bg-white border-b border-gray-200 px-4 py-3 md:px-6 shadow-sm">
+        <!-- <div class="bg-white border-b border-gray-200 px-4 py-3 md:px-6 shadow-sm">
           <div class="flex justify-between items-center">
             <h1 class="text-xl md:text-2xl font-semibold text-gray-800">Work Schedule Calendar</h1>
             <button
@@ -16,7 +16,7 @@
               <i class="fas fa-plus mr-2"></i> Add Schedule
             </button>
           </div>
-        </div>
+        </div> -->
   
         <div class="flex-1 flex flex-col overflow-y-auto p-4 md:p-6 space-y-4">
           <div v-if="isLoading" class="flex-grow flex items-center justify-center text-gray-500">

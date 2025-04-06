@@ -142,7 +142,7 @@ const handleSignup = async () => {
       { withCredentials: true }
     );
 
-    router.push('/login?signup=success');
+    router.push('/admin');
   } catch (error) {
     if (error.response) {
       errorMessage.value = error.response.data?.message || `Signup failed (Status: ${error.response.status})`;

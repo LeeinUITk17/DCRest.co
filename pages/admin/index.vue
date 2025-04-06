@@ -1,6 +1,9 @@
 <template>
   <div class="container mx-auto p-4 md:p-6 space-y-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Point of Sale - Cashier</h1>
+    <div class="w-16 md:w-52 flex-shrink-0 z-50">
+        <sidebar />
+      </div>
+    <!-- <h1 class="text-3xl font-bold text-gray-800 mb-6">Point of Sale - Cashier</h1> -->
 
     <!-- Message Display -->
     <div v-if="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -215,6 +218,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import axios from 'axios';
+import sidebar from '../../components/admin/Sidebar.vue'; 
 
 // --- Axios API Client Setup ---
 // ... (unchanged)
