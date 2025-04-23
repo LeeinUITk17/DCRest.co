@@ -7,6 +7,7 @@
     <nav class="mt-4 flex-grow overflow-y-auto overflow-x-hidden">
       <ItemSidebar icon="cash-register" label="Point Of Sale" to="/admin" />
       <ItemSidebar icon="briefcase" label="EMS" to="/admin/ems" />
+      <ItemSidebar icon="users" label="CRM" to="/admin/crm" />
       <ItemSidebar icon="shopping-cart" label="Orders" to="/admin/orders" />
       <ItemSidebar icon="users" label="Customers" to="/admin/customers" />
       <ItemSidebar icon="utensils" label="Menu" to="/admin/menu" />
@@ -17,13 +18,37 @@
       <ItemSidebar icon="cog" label="Settings" to="/admin/settings" />
     </nav>
     <div class="mt-auto p-4 border-t border-neutral-200 shrink-0">
-      <ItemSidebar icon="sign-out-alt" label="Logout" to="/logout" />
+      <ItemSidebar
+        icon="sign-out-alt"
+        label="Logout"
+        to="/logout"
+        @click.prevent="handleLogout"
+        class="cursor-pointer"
+      />
     </div>
   </aside>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import ItemSidebar from './ItemSitebar.vue';
+
+const router = useRouter();
+
+const handleLogout = async () => {
+  try {
+    await axios.post(
+      'http://localhost:8000/auth/logout',
+      {},
+      { withCredentials: true }
+    );
+    router.push('/admin/login');
+  } catch (error) {
+    console.error("Logout failed:", error);
+    alert('Logout failed. Please try again.');
+  }
+};
 </script>
 
 <style scoped>
@@ -49,10 +74,10 @@ import ItemSidebar from './ItemSitebar.vue';
 .router-link-exact-active:hover i {
   @apply text-white;
 }
-.router-link-exact-active:hover {
-  @apply bg-neutral-200;
-}
 nav a {
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+[label="Logout"] {
+  cursor: pointer;
 }
 </style>
